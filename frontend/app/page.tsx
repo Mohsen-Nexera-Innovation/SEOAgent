@@ -32,9 +32,8 @@ export default function HomePage() {
 
       {/* Main content area — shifts right when sidebar is open */}
       <main
-        className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${
-          sidebarOpen ? "ml-60" : "ml-0"
-        }`}
+        className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${sidebarOpen ? "ml-60" : "ml-0"
+          }`}
       >
         {/* Top header with AI Avatar */}
         <header className="relative flex items-center gap-5 px-8 py-6 border-b border-slate-800 overflow-hidden">
@@ -56,7 +55,7 @@ export default function HomePage() {
               </span>
             </div>
             <p className="text-sm text-slate-400">
-              Keyword research, competitor analysis, and content planning — powered by <span className="text-emerald-400 font-medium">Reksols</span>.
+              Keyword research, competitor analysis, and content planning — powered by <a href="https://reksols.com/" target="_blank" rel="noopener noreferrer" className="text-emerald-400 font-medium">Reksols</a>.
             </p>
           </div>
 

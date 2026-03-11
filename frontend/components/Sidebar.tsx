@@ -52,7 +52,14 @@ export function Sidebar({ activePage, onNavigate, open, onToggle }: SidebarProps
 
         {/* Footer */}
         <div className="px-5 py-4 border-t border-slate-800">
-          <p className="text-[10px] text-slate-600 whitespace-nowrap">Powered by Reksols</p>
+          <a
+            href="https://reksols.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] text-slate-600 hover:text-emerald-400 whitespace-nowrap transition-colors"
+          >
+            Powered by Reksols
+          </a>
         </div>
       </aside>
 

@@ -7,6 +7,7 @@ import { handleKeywordResearch } from "./services/keywordService";
 import { handleCompetitorAnalysis } from "./services/competitorService";
 import { handleContentPlan } from "./agent/contentAgent";
 import { handleChat } from "./agent/masterAgent";
+import { analyzeLinkKeywords } from "./services/linkAnalysisService";
 
 
 const app = express();
@@ -121,6 +122,20 @@ app.post("/api/chat", async (req, res) => {
   } catch (error) {
     console.error("chat error", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/api/link-analysis", async (req, res) => {
+  try {
+    const { url } = req.body as { url: string };
+    if (!url || typeof url !== "string") {
+      return res.status(400).json({ error: "url is required" });
+    }
+    const rows = await analyzeLinkKeywords(url);
+    res.json({ keywords: rows });
+  } catch (error) {
+    console.error("link-analysis error", error);
+    res.status(500).json({ error: (error as Error).message || "Internal server error" });
   }
 });
 

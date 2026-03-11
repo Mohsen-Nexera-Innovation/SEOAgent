@@ -9,6 +9,9 @@ export async function handleKeywordResearch(keywords: string[]) {
       keywords: cluster.keywords,
       intent: cluster.intent,
       competition: cluster.competition,
+      searchVolume: cluster.searchVolume,
+      keywordDifficulty: cluster.keywordDifficulty,
+      cpc: cluster.cpc,
     })),
   };
 }

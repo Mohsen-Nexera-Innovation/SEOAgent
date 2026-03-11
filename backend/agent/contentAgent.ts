@@ -1,6 +1,5 @@
 import { callSeoModel, sanitizeJsonResponse } from "../ai/llmClient";
 
-
 export interface ContentPlanItem {
   pillarPage: string;
   supportingArticles: string[];
@@ -47,7 +46,7 @@ Return JSON only following the schema.
 
   const raw = await callSeoModel({ systemPrompt, userPrompt });
 
-  let parsed: unknown;
+  let parsed: any;
   try {
     parsed = JSON.parse(sanitizeJsonResponse(raw));
   } catch (error) {

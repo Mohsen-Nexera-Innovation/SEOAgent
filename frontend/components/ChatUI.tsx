@@ -69,6 +69,9 @@ export function ChatUI() {
             cluster: cluster.topic,
             intent: cluster.intent,
             competition: cluster.competition,
+            searchVolume: cluster.searchVolume ?? 0,
+            keywordDifficulty: cluster.keywordDifficulty ?? 0,
+            cpc: cluster.cpc ?? 0,
           }))
         );
         setKeywordRows(rows);

@@ -26,6 +26,13 @@ export interface ContentPlanItem {
     targetKeywords: string[];
 }
 
+export interface LinkKeywordRow {
+  keyword: string;
+  searchVolume: number;
+  keywordDifficulty: number;
+  cpc: number;
+}
+
 interface SeoContextValue {
     keywords: string[];
     setKeywords: (kw: string[]) => void;
@@ -35,6 +42,8 @@ interface SeoContextValue {
     setCompetitorRows: (rows: CompetitorRow[]) => void;
     contentPlan: ContentPlanItem[];
     setContentPlan: (plan: ContentPlanItem[]) => void;
+    linkAnalysisRows: LinkKeywordRow[];
+    setLinkAnalysisRows: (rows: LinkKeywordRow[]) => void;
 }
 
 const SeoContext = createContext<SeoContextValue | null>(null);
@@ -44,6 +53,7 @@ export function SeoProvider({ children }: { children: React.ReactNode }) {
     const [keywordRows, setKeywordRows] = useState<KeywordRow[]>([]);
     const [competitorRows, setCompetitorRows] = useState<CompetitorRow[]>([]);
     const [contentPlan, setContentPlan] = useState<ContentPlanItem[]>([]);
+    const [linkAnalysisRows, setLinkAnalysisRows] = useState<LinkKeywordRow[]>([]);
 
     return (
         <SeoContext.Provider
@@ -56,6 +66,8 @@ export function SeoProvider({ children }: { children: React.ReactNode }) {
                 setCompetitorRows,
                 contentPlan,
                 setContentPlan,
+                linkAnalysisRows,
+                setLinkAnalysisRows,
             }}
         >
             {children}

@@ -1,11 +1,14 @@
 import { callSeoModel, sanitizeJsonResponse } from "../ai/llmClient";
-
+import { getDataForSeoMetrics } from "../services/dataForSeoService";
 
 export interface KeywordCluster {
   topic: string;
   keywords: string[];
   intent: "informational" | "commercial" | "transactional" | "navigational";
   competition: "low" | "medium" | "high";
+  searchVolume?: number;
+  keywordDifficulty?: number;
+  cpc?: number;
 }
 
 export async function generateKeywordClusters(
@@ -58,8 +61,34 @@ Return JSON only following the schema.
     );
   }
 
-  const clusters = (parsed as any)?.clusters ?? [];
-  return clusters as KeywordCluster[];
+  const baseClusters = (parsed as any)?.clusters ?? [];
+
+  // Extract all generated keywords into a flat array to fetch metrics
+  const allKeywords = baseClusters.flatMap((c: any) => c.keywords);
+
+  // Fetch metrics from DataForSEO
+  const metrics = await getDataForSeoMetrics(allKeywords);
+
+  // Map the metrics back onto single cluster representations for the frontend
+  // Since frontend expects one row per keyword, we'll split the clusters into individual keyword objects
+  const enrichedClusters: KeywordCluster[] = [];
+
+  for (const cluster of baseClusters) {
+    for (const kw of cluster.keywords) {
+      const metric = metrics[kw] || { searchVolume: 0, keywordDifficulty: 0, cpc: 0 };
+      enrichedClusters.push({
+        topic: cluster.topic,
+        keywords: [kw], // Frontend expects a mapping later, this is easier
+        intent: cluster.intent,
+        competition: cluster.competition,
+        searchVolume: metric.searchVolume,
+        keywordDifficulty: metric.keywordDifficulty,
+        cpc: metric.cpc
+      });
+    }
+  }
+  console.log("ENRICHED CLUSTERS:", JSON.stringify(enrichedClusters));
+  return enrichedClusters;
 }
 
 

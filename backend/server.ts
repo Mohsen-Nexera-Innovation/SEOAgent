@@ -7,8 +7,7 @@ import { handleKeywordResearch } from "./services/keywordService";
 import { handleCompetitorAnalysis } from "./services/competitorService";
 import { handleContentPlan } from "./agent/contentAgent";
 import { handleChat } from "./agent/masterAgent";
-import { analyzeLinkKeywords } from "./services/linkAnalysisService";
-
+import { analyzeLink } from "./services/linkAnalysisService";
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -131,11 +130,95 @@ app.post("/api/link-analysis", async (req, res) => {
     if (!url || typeof url !== "string") {
       return res.status(400).json({ error: "url is required" });
     }
-    const rows = await analyzeLinkKeywords(url);
-    res.json({ keywords: rows });
+    const result = await analyzeLink(url);
+    res.json(result);
   } catch (error) {
     console.error("link-analysis error", error);
     res.status(500).json({ error: (error as Error).message || "Internal server error" });
+  }
+});
+
+app.post("/api/export-word", async (req, res) => {
+  try {
+    const { linkAnalysisDetails } = req.body;
+    if (!linkAnalysisDetails) {
+      return res.status(400).json({ error: "linkAnalysisDetails is required" });
+    }
+
+    const { Document, Packer, Paragraph, TextRun } = require("docx");
+
+    const categories = [
+      { title: "SEO", data: linkAnalysisDetails.seo },
+      { title: "Content", data: linkAnalysisDetails.content },
+      { title: "Performance", data: linkAnalysisDetails.performance }
+    ];
+
+    const generateCategorySections = (title: string, data: any) => {
+      if (!data) return [];
+      
+      const sections = [
+        new Paragraph({
+          children: [new TextRun({ text: title, bold: true, size: 36 })],
+          spacing: { before: 400, after: 200 }
+        }),
+        new Paragraph({
+          children: [new TextRun({ text: "Analysis: ", bold: true }), new TextRun({ text: data.analysis || "N/A" })],
+          spacing: { after: 200 }
+        }),
+        new Paragraph({
+          children: [new TextRun({ text: "Pros:", bold: true })],
+          spacing: { after: 100 }
+        })
+      ];
+
+      (data.pros || []).forEach((pro: string) => {
+        sections.push(new Paragraph({ text: `• ${pro}`, bullet: { level: 0 } }));
+      });
+
+      sections.push(new Paragraph({
+        children: [new TextRun({ text: "Cons:", bold: true })],
+        spacing: { before: 200, after: 100 }
+      }));
+
+      (data.cons || []).forEach((con: string) => {
+        sections.push(new Paragraph({ text: `• ${con}`, bullet: { level: 0 } }));
+      });
+
+      sections.push(new Paragraph({
+        children: [new TextRun({ text: "Enhancements:", bold: true })],
+        spacing: { before: 200, after: 100 }
+      }));
+
+      (data.enhancements || []).forEach((enhancement: string) => {
+        sections.push(new Paragraph({ text: `• ${enhancement}`, bullet: { level: 0 } }));
+      });
+
+      return sections;
+    };
+
+    const doc = new Document({
+      sections: [{
+        properties: {},
+        children: [
+          new Paragraph({
+            children: [new TextRun({ text: "Detailed Site Analysis Report", bold: true, size: 48 })],
+            spacing: { after: 400 }
+          }),
+          ...categories.flatMap(cat => generateCategorySections(cat.title, cat.data))
+        ]
+      }]
+    });
+
+    const b64string = await Packer.toBase64String(doc);
+    const buffer = Buffer.from(b64string, "base64");
+
+    const filename = `site-analysis-${new Date().toISOString().slice(0, 10)}.docx`;
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    res.send(buffer);
+  } catch (error) {
+    console.error("export-word error", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 

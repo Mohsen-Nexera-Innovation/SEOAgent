@@ -2,7 +2,20 @@
 
 import { useState } from "react";
 
-type Page = "keywords" | "chat" | "link-analysis";
+type Page = "keywords" | "chat" | "link-analysis" | "site-audit";
+
+interface NavItem {
+  id: Page;
+  label: string;
+  icon: string;
+}
+
+interface NavCategory {
+  id: string;
+  label: string;
+  icon: string;
+  items: NavItem[];
+}
 
 interface SidebarProps {
   activePage: Page;
@@ -11,54 +24,116 @@ interface SidebarProps {
   onToggle: () => void;
 }
 
-const navItems: { id: Page; label: string; icon: string }[] = [
-  { id: "keywords", label: "Keywords", icon: "🔑" },
-  { id: "chat", label: "Chat with AI SEO", icon: "💬" },
-  { id: "link-analysis", label: "Link Analysis", icon: "🔗" },
+const categories: NavCategory[] = [
+  {
+    id: "keyword-research",
+    label: "Keyword Research",
+    icon: "🔑",
+    items: [
+      { id: "keywords", label: "Overview", icon: "📊" },
+      { id: "chat", label: "AI SEO Chat", icon: "💬" },
+      { id: "link-analysis", label: "Link Analysis", icon: "🔗" },
+    ],
+  },
+  {
+    id: "technical-seo",
+    label: "Technical SEO",
+    icon: "⚙️",
+    items: [
+      { id: "site-audit", label: "Site Audit", icon: "🔍" },
+    ],
+  },
 ];
 
 export function Sidebar({ activePage, onNavigate, open, onToggle }: SidebarProps) {
+  const [expandedCats, setExpandedCats] = useState<string[]>(["keyword-research", "technical-seo"]);
+
+  const toggleCategory = (id: string) => {
+    setExpandedCats((prev) =>
+      prev.includes(id) ? prev.filter((catId) => catId !== id) : [...prev, id]
+    );
+  };
+
   return (
     <>
       {/* Sidebar panel */}
       <aside
-        className={`fixed top-0 left-0 h-full z-30 flex flex-col bg-slate-900 border-r border-slate-800 transition-all duration-300 ease-in-out ${open ? "w-60" : "w-0 overflow-hidden"
+        className={`fixed top-0 left-0 h-full z-30 flex flex-col bg-slate-950 border-r border-slate-800 transition-all duration-300 ease-in-out ${open ? "w-64" : "w-0 overflow-hidden"
           }`}
       >
         {/* Logo */}
-        <div className="flex items-center gap-3 px-4 py-5 border-b border-slate-800">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center text-slate-950 font-bold text-sm flex-shrink-0">
+        <div className="flex items-center gap-3 px-6 py-8 border-b border-slate-900/50">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center text-slate-950 font-bold text-lg flex-shrink-0 shadow-lg shadow-emerald-500/20">
             R
           </div>
-          <span className="text-sm font-semibold text-white whitespace-nowrap">Reksols SEO</span>
+          <div className="flex flex-col">
+            <span className="text-sm font-bold text-white whitespace-nowrap leading-none">Reksols SEO</span>
+            <span className="text-[10px] text-emerald-400 font-medium tracking-widest mt-1">AGENT v1.0</span>
+          </div>
         </div>
 
-        {/* Nav items */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-hidden">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => onNavigate(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 whitespace-nowrap ${activePage === item.id
-                ? "bg-emerald-500/15 text-emerald-400 font-medium"
-                : "text-slate-400 hover:text-white hover:bg-slate-800"
-                }`}
-            >
-              <span className="text-base">{item.icon}</span>
-              {item.label}
-            </button>
-          ))}
+        {/* Navigation Categories */}
+        <nav className="flex-1 px-4 py-6 space-y-6 overflow-y-auto scrollbar-hide overflow-hidden">
+          {categories.map((category) => {
+            const isExpanded = expandedCats.includes(category.id);
+            return (
+              <div key={category.id} className="space-y-2">
+                <button
+                  onClick={() => toggleCategory(category.id)}
+                  className="w-full flex items-center justify-between px-2 text-xs font-bold text-slate-500 uppercase tracking-widest hover:text-slate-300 transition-colors group"
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="opacity-70">{category.icon}</span>
+                    {category.label}
+                  </span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`h-3 w-3 transition-transform duration-300 ${isExpanded ? "rotate-0" : "-rotate-90"}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {isExpanded && (
+                  <div className="space-y-1 animate-in slide-in-from-top-1 duration-200">
+                    {category.items.map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => onNavigate(item.id)}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-150 whitespace-nowrap ${activePage === item.id
+                          ? "bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20 shadow-lg shadow-emerald-500/5"
+                          : "text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent"
+                          }`}
+                      >
+                        <span className="text-base opacity-80">{item.icon}</span>
+                        {item.label}
+                        {activePage === item.id && (
+                          <span className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </nav>
 
         {/* Footer */}
-        <div className="px-5 py-4 border-t border-slate-800">
+        <div className="px-6 py-6 border-t border-slate-900/50 bg-slate-950/50">
           <a
             href="https://reksols.com/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[10px] text-slate-600 hover:text-emerald-400 whitespace-nowrap transition-colors"
+            className="flex items-center gap-2 group transition-opacity"
           >
-            Powered by Reksols
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span className="text-[11px] text-slate-500 group-hover:text-emerald-400 transition-colors font-medium">
+              Powered by Reksols
+            </span>
           </a>
         </div>
       </aside>
@@ -66,19 +141,17 @@ export function Sidebar({ activePage, onNavigate, open, onToggle }: SidebarProps
       {/* Toggle button — always visible */}
       <button
         onClick={onToggle}
-        className={`fixed top-5 z-40 flex h-8 w-8 items-center justify-center rounded-md border border-slate-700 bg-slate-900 text-slate-400 hover:text-white hover:border-slate-600 transition-all duration-300  ${open ? "left-[12rem]" : "left-4"
+        className={`fixed top-8 z-40 flex h-10 w-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-950 text-slate-400 hover:text-white hover:border-slate-600 transition-all duration-300 shadow-2xl ${open ? "left-[13.5rem]" : "left-6"
           }`}
         aria-label="Toggle sidebar"
       >
         {open ? (
-          // X icon
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         ) : (
-          // Hamburger icon
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
           </svg>
         )}
       </button>

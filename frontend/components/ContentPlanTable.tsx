@@ -24,9 +24,9 @@ export function ContentPlanTable({ data }: ContentPlanTableProps) {
                             <div className="mb-2">
                                 <span className="text-[10px] uppercase tracking-wide text-slate-400">Target Keywords</span>
                                 <div className="flex flex-wrap gap-1 mt-1">
-                                    {item.targetKeywords.map((kw) => (
-                                        <span key={kw} className="inline-block rounded-full bg-slate-800 px-2 py-0.5 text-[11px]">
-                                            {kw}
+                                    {(item.targetKeywords || []).map((kw: any) => (
+                                        <span key={typeof kw === 'string' ? kw : kw.keyword} className="inline-block rounded-full bg-slate-800 px-2 py-0.5 text-[11px]">
+                                            {typeof kw === 'string' ? kw : kw.keyword}
                                         </span>
                                     ))}
                                 </div>

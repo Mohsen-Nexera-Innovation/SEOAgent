@@ -65,7 +65,14 @@ This document contains the architectural and detailed design for building an Art
   * Fetch the `robots.txt` file from the site's root directory (e.g., `domain.com/robots.txt`).
   * Parse the file to look for any `Disallow` directives that might accidentally block crawlers from indexing important pages.
 
-### 5. `export_to_report`
+### 5. `structured_data_checker`
+* **Objective:** Audit and validate Schema Markup (JSON-LD).
+* **How to Implement:**
+  * Scrape the HTML and extract all `<script type="application/ld+json">` tags.
+  * Use a library like `schema-dts` or an LLM to validate the schema against schema.org standards.
+  * Suggest missing schemas based on the page content (e.g., if it's a blog post, check for `Article` or `BlogPosting` schema).
+
+### 6. `export_to_report`
 * **Objective:** Output a comprehensive technical report.
 * **How to Implement:**
   * Generate a PDF report using libraries like `ReportLab` or create an HTML dashboard/page that displays errors categorized by severity (Errors, Warnings, Notices).

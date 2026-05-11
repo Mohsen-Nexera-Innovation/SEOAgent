@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-type Page = "keywords" | "chat" | "link-analysis" | "site-audit";
+type Page = "keywords" | "chat" | "link-analysis" | "site-audit" | "broken-links";
 
 interface NavItem {
   id: Page;
@@ -41,6 +41,7 @@ const categories: NavCategory[] = [
     icon: "⚙️",
     items: [
       { id: "site-audit", label: "Site Audit", icon: "🔍" },
+      { id: "broken-links", label: "Broken Links", icon: "🔗" },
     ],
   },
 ];

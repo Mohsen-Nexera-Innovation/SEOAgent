@@ -6,14 +6,16 @@ import { KeywordPage } from "../components/KeywordPage";
 import { ChatPage } from "../components/ChatPage";
 import { LinkAnalysisPage } from "../components/LinkAnalysisPage";
 import { SiteAuditPage } from "../components/SiteAuditPage";
+import { BrokenLinksPage } from "../components/BrokenLinksPage";
 
-type Page = "keywords" | "chat" | "link-analysis" | "site-audit";
+type Page = "keywords" | "chat" | "link-analysis" | "site-audit" | "broken-links";
 
 const pageTitles: Record<Page, { title: string; subtitle: string }> = {
   keywords: { title: "Keyword Research", subtitle: "Discover keyword clusters, analyze competition, and build a content strategy." },
   chat: { title: "Chat with AI SEO", subtitle: "Ask the SEO agent to analyze any topic, and get instant keyword insights." },
   "link-analysis": { title: "Link Keywords Analysis", subtitle: "Enter a URL and get a full keyword breakdown of that website's content." },
   "site-audit": { title: "Site Audit", subtitle: "Analyze site performance, Core Web Vitals, and technical health." },
+  "broken-links": { title: "Broken Links Checker", subtitle: "Scan any page to find broken or valid internal and external links." },
 };
 
 export default function HomePage() {
@@ -90,6 +92,7 @@ export default function HomePage() {
           {activePage === "chat" && <ChatPage />}
           {activePage === "link-analysis" && <LinkAnalysisPage />}
           {activePage === "site-audit" && <SiteAuditPage />}
+          {activePage === "broken-links" && <BrokenLinksPage />}
         </div>
       </main>
     </div>

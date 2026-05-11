@@ -10,6 +10,7 @@ import { handleChat } from "./agent/masterAgent";
 import { analyzeLink } from "./services/linkAnalysisService";
 import { handleSiteAudit } from "./services/auditService";
 import { checkBrokenLinks } from "./services/brokenLinksService";
+import { checkStructuredData } from "./services/schemaService";
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -168,6 +169,20 @@ app.post("/api/broken-links", async (req, res) => {
   }
 });
 
+app.post("/api/schema-check", async (req, res) => {
+  try {
+    const { url } = req.body as { url: string };
+    if (!url || typeof url !== "string") {
+      return res.status(400).json({ error: "url is required" });
+    }
+    const result = await checkStructuredData(url);
+    res.json(result);
+  } catch (error) {
+    console.error("schema-check error", error);
+    res.status(500).json({ error: (error as Error).message || "Internal server error" });
+  }
+});
+
 app.post("/api/export-word", async (req, res) => {
   try {
     const { linkAnalysisDetails } = req.body;
@@ -185,7 +200,7 @@ app.post("/api/export-word", async (req, res) => {
 
     const generateCategorySections = (title: string, data: any) => {
       if (!data) return [];
-      
+
       const sections = [
         new Paragraph({
           children: [new TextRun({ text: title, bold: true, size: 36 })],

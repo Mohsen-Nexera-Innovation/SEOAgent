@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-type Page = "keywords" | "chat" | "link-analysis" | "site-audit" | "broken-links" | "schema-checker";
+type Page = "keywords" | "chat" | "link-analysis" | "site-audit" | "broken-links" | "schema-checker" | "indexing-tools" | "meta-optimizer" | "content-generator" | "header-checker" | "image-checker";
 
 interface NavItem {
   id: Page;
@@ -43,12 +43,24 @@ const categories: NavCategory[] = [
       { id: "site-audit", label: "Site Audit", icon: "🔍" },
       { id: "broken-links", label: "Broken Links", icon: "🔗" },
       { id: "schema-checker", label: "Schema Checker", icon: "🧩" },
+      { id: "indexing-tools", label: "Indexing Tools", icon: "🗂️" },
+    ],
+  },
+  {
+    id: "onpage",
+    label: "On-Page SEO",
+    icon: "📄",
+    items: [
+      { id: "meta-optimizer", label: "Meta Tags Optimizer", icon: "🏷️" },
+      { id: "header-checker", label: "Header Structure", icon: "📑" },
+      { id: "image-checker", label: "Image Alt Checker", icon: "🖼️" },
+      { id: "content-generator", label: "Content Generator", icon: "✍️" },
     ],
   },
 ];
 
 export function Sidebar({ activePage, onNavigate, open, onToggle }: SidebarProps) {
-  const [expandedCats, setExpandedCats] = useState<string[]>(["keyword-research", "technical-seo"]);
+  const [expandedCats, setExpandedCats] = useState<string[]>(["keyword-research", "technical-seo", "onpage"]);
 
   const toggleCategory = (id: string) => {
     setExpandedCats((prev) =>
@@ -75,7 +87,16 @@ export function Sidebar({ activePage, onNavigate, open, onToggle }: SidebarProps
         </div>
 
         {/* Navigation Categories */}
-        <nav className="flex-1 px-4 py-6 space-y-6 overflow-y-auto scrollbar-hide overflow-hidden">
+        <nav className="flex-1 px-4 py-6 space-y-6 overflow-y-auto scrollbar-hide">
+          <style jsx>{`
+            .scrollbar-hide::-webkit-scrollbar {
+              display: none;
+            }
+            .scrollbar-hide {
+              -ms-overflow-style: none;
+              scrollbar-width: none;
+            }
+          `}</style>
           {categories.map((category) => {
             const isExpanded = expandedCats.includes(category.id);
             return (

@@ -8,8 +8,13 @@ import { LinkAnalysisPage } from "../components/LinkAnalysisPage";
 import { SiteAuditPage } from "../components/SiteAuditPage";
 import { BrokenLinksPage } from "../components/BrokenLinksPage";
 import { SchemaCheckerPage } from "../components/SchemaCheckerPage";
+import { IndexingToolsPage } from "../components/IndexingToolsPage";
+import { MetaOptimizerPage } from "../components/MetaOptimizerPage";
+import { HeaderCheckerPage } from "../components/HeaderCheckerPage";
+import { ImageAltCheckerPage } from "../components/ImageAltCheckerPage";
+import { ContentGeneratorPage } from "../components/ContentGeneratorPage";
 
-type Page = "keywords" | "chat" | "link-analysis" | "site-audit" | "broken-links" | "schema-checker";
+type Page = "keywords" | "chat" | "link-analysis" | "site-audit" | "broken-links" | "schema-checker" | "indexing-tools" | "meta-optimizer" | "content-generator" | "header-checker" | "image-checker";
 
 const pageTitles: Record<Page, { title: string; subtitle: string }> = {
   keywords: { title: "Keyword Research", subtitle: "Discover keyword clusters, analyze competition, and build a content strategy." },
@@ -18,6 +23,11 @@ const pageTitles: Record<Page, { title: string; subtitle: string }> = {
   "site-audit": { title: "Site Audit", subtitle: "Analyze site performance, Core Web Vitals, and technical health." },
   "broken-links": { title: "Broken Links Checker", subtitle: "Scan any page to find broken or valid internal and external links." },
   "schema-checker": { title: "Schema Markup Checker", subtitle: "Extract and validate JSON-LD structured data with AI insights." },
+  "indexing-tools": { title: "Indexing Tools", subtitle: "Generate and validate sitemaps and robots.txt files for better search visibility." },
+  "meta-optimizer": { title: "Meta Tags Optimizer", subtitle: "Audit your current meta tags and generate AI-optimized titles and descriptions." },
+  "header-checker": { title: "Header Structure Checker", subtitle: "Review the correct usage and hierarchy of H1-H6 headings." },
+  "image-checker": { title: "Image Alt Checker", subtitle: "Ensure images have descriptive alt text and generate missing alts with AI." },
+  "content-generator": { title: "AI Content Generator", subtitle: "Generate high-quality, SEO-optimized content clusters and articles." },
 };
 
 export default function HomePage() {
@@ -96,6 +106,11 @@ export default function HomePage() {
           {activePage === "site-audit" && <SiteAuditPage />}
           {activePage === "broken-links" && <BrokenLinksPage />}
           {activePage === "schema-checker" && <SchemaCheckerPage />}
+          {activePage === "indexing-tools" && <IndexingToolsPage />}
+          {activePage === "meta-optimizer" && <MetaOptimizerPage />}
+          {activePage === "header-checker" && <HeaderCheckerPage />}
+          {activePage === "image-checker" && <ImageAltCheckerPage />}
+          {activePage === "content-generator" && <ContentGeneratorPage />}
         </div>
       </main>
     </div>

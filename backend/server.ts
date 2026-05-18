@@ -13,7 +13,7 @@ import { checkBrokenLinks } from "./services/brokenLinksService";
 import { checkStructuredData } from "./services/schemaService";
 import { checkRobots, generateRobots } from "./services/robotsService";
 import { checkSitemap, generateSitemap } from "./services/sitemapService";
-import { auditMetaTags, checkHeaderStructure, checkImageAlts, generateSmartAlt } from "./services/onPageService";
+import { auditMetaTags, checkHeaderStructure, checkImageAlts, generateSmartAlt, analyzeKeywordDensity } from "./services/onPageService";
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -264,6 +264,16 @@ app.post("/api/onpage/smart-alt", async (req, res) => {
     const { imageUrl, targetKeyword } = req.body;
     const alt = await generateSmartAlt(imageUrl, targetKeyword);
     res.json({ alt });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/api/onpage/density-check", async (req, res) => {
+  try {
+    const { url, targetKeyword } = req.body;
+    const result = await analyzeKeywordDensity(url, targetKeyword);
+    res.json(result);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }

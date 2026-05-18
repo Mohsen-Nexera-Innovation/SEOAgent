@@ -12,9 +12,10 @@ import { IndexingToolsPage } from "../components/IndexingToolsPage";
 import { MetaOptimizerPage } from "../components/MetaOptimizerPage";
 import { HeaderCheckerPage } from "../components/HeaderCheckerPage";
 import { ImageAltCheckerPage } from "../components/ImageAltCheckerPage";
+import { KeywordDensityPage } from "../components/KeywordDensityPage";
 import { ContentGeneratorPage } from "../components/ContentGeneratorPage";
 
-type Page = "keywords" | "chat" | "link-analysis" | "site-audit" | "broken-links" | "schema-checker" | "indexing-tools" | "meta-optimizer" | "content-generator" | "header-checker" | "image-checker";
+type Page = "keywords" | "chat" | "link-analysis" | "site-audit" | "broken-links" | "schema-checker" | "indexing-tools" | "meta-optimizer" | "content-generator" | "header-checker" | "image-checker" | "density-analyzer";
 
 const pageTitles: Record<Page, { title: string; subtitle: string }> = {
   keywords: { title: "Keyword Research", subtitle: "Discover keyword clusters, analyze competition, and build a content strategy." },
@@ -27,6 +28,7 @@ const pageTitles: Record<Page, { title: string; subtitle: string }> = {
   "meta-optimizer": { title: "Meta Tags Optimizer", subtitle: "Audit your current meta tags and generate AI-optimized titles and descriptions." },
   "header-checker": { title: "Header Structure Checker", subtitle: "Review the correct usage and hierarchy of H1-H6 headings." },
   "image-checker": { title: "Image Alt Checker", subtitle: "Ensure images have descriptive alt text and generate missing alts with AI." },
+  "density-analyzer": { title: "Keyword Density Analyzer", subtitle: "Analyze word frequency and optimize keyword distribution for SEO." },
   "content-generator": { title: "AI Content Generator", subtitle: "Generate high-quality, SEO-optimized content clusters and articles." },
 };
 
@@ -110,6 +112,7 @@ export default function HomePage() {
           {activePage === "meta-optimizer" && <MetaOptimizerPage />}
           {activePage === "header-checker" && <HeaderCheckerPage />}
           {activePage === "image-checker" && <ImageAltCheckerPage />}
+          {activePage === "density-analyzer" && <KeywordDensityPage />}
           {activePage === "content-generator" && <ContentGeneratorPage />}
         </div>
       </main>

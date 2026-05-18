@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-type Page = "keywords" | "chat" | "link-analysis" | "site-audit" | "broken-links" | "schema-checker" | "indexing-tools" | "meta-optimizer" | "content-generator" | "header-checker" | "image-checker";
+type Page = "keywords" | "chat" | "link-analysis" | "site-audit" | "broken-links" | "schema-checker" | "indexing-tools" | "meta-optimizer" | "content-generator" | "header-checker" | "image-checker" | "density-analyzer";
 
 interface NavItem {
   id: Page;
@@ -54,6 +54,7 @@ const categories: NavCategory[] = [
       { id: "meta-optimizer", label: "Meta Tags Optimizer", icon: "🏷️" },
       { id: "header-checker", label: "Header Structure", icon: "📑" },
       { id: "image-checker", label: "Image Alt Checker", icon: "🖼️" },
+      { id: "density-analyzer", label: "Keyword Density", icon: "📊" },
       { id: "content-generator", label: "Content Generator", icon: "✍️" },
     ],
   },

@@ -180,3 +180,92 @@ export const generateSmartAlt = async (imageUrl: string, targetKeyword?: string)
 
   return aiResponse.trim();
 };
+
+export const analyzeKeywordDensity = async (url: string, targetKeyword?: string) => {
+  try {
+    const response = await axios.get(url, {
+      headers: { "User-Agent": "Mozilla/5.0" },
+      timeout: 7000,
+    });
+    const $ = cheerio.load(response.data);
+    
+    // Remove scripts, styles, and other non-content tags
+    $('script, style, nav, footer, header, noscript').remove();
+    const text = $('body').text().toLowerCase();
+    
+    // Clean text and split into words
+    const words = text.replace(/[^a-zA-Z0-9\u0600-\u06FF\s]/g, ' ').split(/\s+/).filter(w => w.length > 2);
+    const totalWords = words.length;
+
+    // Helper to generate N-grams
+    const generateNGrams = (arr: string[], n: number) => {
+      const nGrams: string[] = [];
+      for (let i = 0; i <= arr.length - n; i++) {
+        nGrams.push(arr.slice(i, i + n).join(' '));
+      }
+      return nGrams;
+    };
+
+    const stopWords = new Set(['the', 'and', 'for', 'that', 'this', 'with', 'from', 'your', 'will', 'have', 'not', 'are', 'was', 'were', 'but', 'can', 'all', 'any']);
+
+    const getTopPhrases = (n: number) => {
+      const phrases = generateNGrams(words, n);
+      const freq: Record<string, number> = {};
+      phrases.forEach(p => {
+        // For single words, filter stop words. For phrases, we keep them as they are part of the context
+        if (n > 1 || !stopWords.has(p)) {
+          freq[p] = (freq[p] || 0) + 1;
+        }
+      });
+
+      return Object.entries(freq)
+        .map(([word, count]) => ({
+          word,
+          count,
+          density: parseFloat(((count / totalWords) * 100).toFixed(2))
+        }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 15);
+    };
+
+    const analysis = {
+      oneGram: getTopPhrases(1),
+      twoGram: getTopPhrases(2),
+      threeGram: getTopPhrases(3)
+    };
+
+    // Target Keyword Analysis
+    let targetAnalysis = null;
+    if (targetKeyword) {
+      const lowerKeyword = targetKeyword.toLowerCase();
+      const keywordCount = words.join(' ').split(lowerKeyword).length - 1;
+      const density = parseFloat(((keywordCount / totalWords) * 100).toFixed(2));
+      
+      const prompt = `
+        As an SEO expert, evaluate a keyword density of ${density}% for the keyword "${targetKeyword}" in a page of ${totalWords} words.
+        Is it optimal, too low, or too high (keyword stuffing)?
+        Give a brief advice.
+      `;
+      
+      const aiResponse = await callSeoModel({
+        systemPrompt: "You are a professional SEO analyst.",
+        userPrompt: prompt
+      });
+
+      targetAnalysis = {
+        keyword: targetKeyword,
+        count: keywordCount,
+        density,
+        aiAdvice: aiResponse
+      };
+    }
+
+    return {
+      totalWords,
+      topWords: analysis,
+      targetAnalysis
+    };
+  } catch (error: any) {
+    throw new Error("Failed to analyze keyword density: " + error.message);
+  }
+};
